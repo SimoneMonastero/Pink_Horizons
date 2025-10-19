@@ -5,8 +5,15 @@ t=tm(end);
 
 [aAP, aML, aV] = algo_Moe_Nilssen(accData(:,3), accData(:,2), accData(:,1) ,'tiltAndNoG');
 
-[paV,f]=pwelch(aV);
-plot(f,paV)
+% Conversion from g to m/s^2:
+g = 9.81;
+aAP = aAP*g;
+aML = aML*g;
+aV = aV*g;
+
+% [paV,f]=pwelch(aV);
+[paV,f]=pwelch(aV, [], [], [], Fs);    % Pwelch vuole anche la sampling frequency, se no di default è 1Hz
+% plot(f,paV)
 paV=paV(f>0.5 & f<3);
 f=f(f>0.5 & f<3);
 figure 
@@ -51,3 +58,4 @@ step_length=2*sqrt(2*l_con*h - h^2); % metri/passo
 gait_speed=step_length * passi_sec
 
 plot(position)
+
