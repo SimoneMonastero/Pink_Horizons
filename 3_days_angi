@@ -1,0 +1,59 @@
+clear, clc, close all
+
+[signal, Fs, tm] = rdsamp('long-term-movement-monitoring-database-1.0.0/3-days/CO001');
+
+g = 9.81;
+threshold_SMA = 0.8*g;
+threshold_en = 0.05;
+[aAP, aML, aV] = algo_Moe_Nilssen(signal(:,3), signal(:,2), signal(:,1) ,'tilt');
+window = Fs*1;
+% p_overlap = 0.5;
+lowCut = 0.5; % Hz
+highCut = 15; % Hz
+order = 4;
+Wn = [lowCut highCut] / (Fs/2);
+[B_bp, A_bp] = butter(order, Wn, 'bandpass');
+aAp_filt = filtfilt(B_bp, A_bp, aAP);
+
+limit = floor(length(aAp_filt)/window);
+% limit = floor(length(aV)/(window*p_overlap)) - 1;
+SMA = zeros(limit,1);
+energy  = zeros(limit,1);
+for i = 0:(limit-1)
+    % aVw = aV(window*i +1 : window*(i+1));
+    % aMLw = aML(window*i +1 : window*(i+1));
+    aAPw = aAp_filt(window*i +1 : window*(i+1));
+    % aVw = aV(window*p_overlap*i +1 : window*p_overlap*i + window);
+    % aMLw = aML(window*p_overlap*i +1 : window*p_overlap*i + window);
+    % aAPw = aAP(window*p_overlap*i +1 : window*p_overlap*i + window);
+    SMA = 1/(tm(window*(i+1))-tm((window*i)+1))* trapz(tm((window*i)+1):tm(window*(i+1)),aAPw);
+    % SMA(i+1)= mean(abs(aAPw));
+    
+    [paAPw,f]=pwelch(aAPw, [], [], [], Fs); 
+    paAPw=paAPw(f>0.5 & f<3);
+    f=f(f>0.5 & f<3);
+
+    energy(i+1) = trapz(f,paAPw);
+end
+
+walking = (SMA > threshold_SMA) | (energy > threshold_en);
+plot(walking,'c')
+
+i = 1;
+while i < length(walking)
+    if all(walking(i: min([i+59, length(walking)])))
+        i = i+1;
+        while all(walking(i: min([i+60, length(walking)])))
+            i = i+1;
+        end
+        i = i+59;
+    else
+        walking(i) = 0;
+    end
+    i = i+1;
+end
+
+sum(walking==1)/length(walking) * 100
+hold on
+plot(walking, 'r')
+
