@@ -17,9 +17,12 @@ limit = floor(length(aV)/(window*p_overlap)) - 1;
 SMA = zeros(limit,1);
 energy  = zeros(limit,1);
 for i = 0:(limit-1)
-    aVw = aV(window*i +1 : window*(i+1));
-    aMLw = aML(window*i +1 : window*(i+1));
-    aAPw = aAP(window*i +1 : window*(i+1));
+%     aVw = aV(window*i +1 : window*(i+1));
+%     aMLw = aML(window*i +1 : window*(i+1));
+%     aAPw = aAP(window*i +1 : window*(i+1));
+    aVw = aV(window*p_overlap*i +1, window*p_overlap*i + window);
+    aMLw = aML(window*p_overlap*i +1, window*p_overlap*i + window);
+    aAPw = aAP(window*p_overlap*i +1, window*p_overlap*i + window);
 
     SMA(i+1) = mean(abs(aVw) + abs(aMLw) + abs(aAPw));
     [paAPw,f]=pwelch(aAPw, [], [], [], Fs); 
@@ -30,7 +33,7 @@ for i = 0:(limit-1)
 end
 
 walking = (SMA > threshold_SMA) | (energy > threshold_en);
-%%
+plot(walking,'c')
 
 i = 1;
 while i < length(walking)
@@ -47,5 +50,7 @@ while i < length(walking)
 end
 
 sum(walking>0)/length(walking) * 100
-plot(walking)
+hold on
+plot(walking, 'r')
+
 
