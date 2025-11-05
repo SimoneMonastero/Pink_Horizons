@@ -1,0 +1,73 @@
+clc, clear, close all
+% Folder that contains the data
+ miaCartella = 'long-term-movement-monitoring-database-1.0.0\3days'; 
+% Creation of the search criterion (all the file .hea inside the specified folder)
+pattern = fullfile(miaCartella, '*.hea');
+% 3. Trova tutti i file e le cartelle che corrispondono
+elencoStruct = dir(pattern);
+% 5. Estrai i nomi in un "vettore" (specificamente, un cell array)
+nomiFile = {elencoStruct.name};    % {'file1.hea', 'file2.hea', 'file3.hea'}
+
+walking_percentage_CO=[]; % walking percentage
+walking_percentage_FL=[];
+
+total_steps_CO=[]; % total number of steps
+total_steps_FL=[];
+
+stride_time_CO=[]; % stride time
+stride_time_FL=[];
+
+% Parametri dell'Analisi
+Fs = 100; % Sampling frequency
+window_sec = 1; % Finestra di analisi per SMA ed Energia
+window = Fs * window_sec; % Campioni per finestra da 1s
+min_bout_duration_sec = 60; % Durata minima bout di cammino
+threshold_SMA_min = 0.135;
+threshold_SMA_max = 0.8;
+
+threshold_en = 0.05;
+
+% Filtro passa-alto
+Wn = 0.5 / (Fs / 2);
+order = 4;
+[B_hp, A_hp] = butter(order, Wn, 'high');
+% Filtro passa-basso per numero passi
+Wn=5/(Fs/2);
+[B_lp, A_lp] = butter(order, Wn);
+
+
+for k = 1:1%length(nomiFile)
+    record_name = char(nomiFile(k));
+    record_name = record_name(1:5);
+    % record_name = ['data\' record_name];                % Per settare il file path corretto
+     record_name = ['long-term-movement-monitoring-database-1.0.0\3days\' record_name];   
+    % Caricamento dati
+    disp(['Caricamento dati da: ', record_name, '...']);
+    [signal, Fs, tm] = rdsamp(record_name);
+    
+    % Calcola le componenti AP, ML, V corrette per tilt e gravità
+    col_V = 1; % Indice colonna Verticale
+    col_ML = 2; % Indice colonna Medio-Laterale
+    col_AP = 3; % Indice colonna Antero-Posteriore
+    [aAP, aML, aV] = algo_Moe_Nilssen(signal(:,col_AP), signal(:,col_ML), signal(:,col_V), 'tiltAndNoG');
+    
+    % Pre-Processing (Filtraggio)
+    % disp('Filtraggio dei segnali (filtfilt)...');
+    aV_filt = filtfilt(B_hp, A_hp, aV);
+    aML_filt = filtfilt(B_hp, A_hp, aML);
+    aAP_filt = filtfilt(B_hp, A_hp, aAP);
+    
+   
+   [SMA, energy]=SMA_energy_func(window,aV_filt, aML_filt, aAP_filt, limit);
+
+    % --- 5. Decisione cammino (Logica OR) ---
+    walking = ((SMA > threshold_SMA_min(k)) & (SMA < threshold_SMA_max(k))) | (energy > threshold_en);
+    
+    [p_walking]=percentage_walking_func(walking,min_bout_duration_sec);
+    [total_steps, FSs]=number_steps_func(B_lp,A_lp,Fs,window,min_bout_duration_sec,bout_starts,bout_ends,bout_durations,aAP,aAP_filt);
+    [stride_duration]=stride_duration_func(FSs);
+    [walking_percentage_CO, walking_percentage_FL, total_steps_CO, total_steps_FL, stride_time_CO, stride_time_FL]=sorting_func(record_name, p_walking, total_steps, stride_duration);
+    
+end
+
+output_func(walking_percentage_CO, walking_percentage_FL, total_steps_CO, total_steps_FL, stride_time_CO, stride_time_FL)
