@@ -11,14 +11,14 @@ function output_func(walking_percentage_CO, walking_percentage_FL, total_steps_C
     std_stepsCO=std(total_steps_CO);
     mean_stepsFL=mean(total_steps_FL);
     std_stepsFL=std(total_steps_FL);
-    fprintf("mean number of steps controls: %f +- %f m/s \n",mean_stepsCO,std_stepsCO)
-    fprintf("mean number of steps fallers: %f +- %f m/s \n",mean_stepsFL,std_stepsFL)
+    fprintf("mean number of steps controls: %f +- %f steps \n",mean_stepsCO,std_stepsCO)
+    fprintf("mean number of steps fallers: %f +- %f steps \n",mean_stepsFL,std_stepsFL)
     
     mean_stridetimeCO=mean(stride_time_CO);
     std_stridetimeCO=std(stride_time_CO);
     mean_sridetimeFL=mean(stride_time_FL);
     std_stridetimeFL=std(stride_time_FL);
-    fprintf("mean stride time controls: %f +- %f m/s \n",mean_stridetimeCO,std_stridetimeCO)
-    fprintf("mean stride time fallers: %f +- %f m/s \n",mean_sridetimeFL,std_stridetimeFL)
-    
+    fprintf("mean stride time controls: %f +- %f seconds \n",mean_stridetimeCO,std_stridetimeCO)
+    fprintf("mean stride time fallers: %f +- %f seconds \n",mean_sridetimeFL,std_stridetimeFL)
+
 end
