@@ -79,5 +79,8 @@ for k = 1:length(nomiFile)
     end
 
 end
-
+%%
+save('Result with outliers')
+[walking_percentage_CO, walking_percentage_FL, total_steps_CO, total_steps_FL, stride_time_CO, stride_time_FL] = outlier_removal_func(walking_percentage_CO, walking_percentage_FL, total_steps_CO, total_steps_FL, stride_time_CO, stride_time_FL, nomiFile);
 output_func(walking_percentage_CO, walking_percentage_FL, total_steps_CO, total_steps_FL, stride_time_CO, stride_time_FL)
+save('Result removing outliers')
