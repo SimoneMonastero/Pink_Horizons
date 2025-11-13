@@ -1,0 +1,24 @@
+function [SMA, energy] = SMA_energy_func2(window, aV_filt, aML_filt, aAP_filt, Fs, limit)
+    % Pre-allocate
+    SMA = zeros(limit, 1);
+    energy = zeros(limit, 1);
+    
+    % Create a Band-Pass filter for Energy (0.5-3Hz)
+    [b_band, a_band] = butter(2, [0.5 3]/(Fs/2), 'bandpass');
+    
+    % Filter the WHOLE signal at once (Fast!)
+    % We use aAP because your original code used paAPw (AP axis)
+    aAP_bandpower = filtfilt(b_band, a_band, aAP_filt); 
+
+    for i = 0:(limit-1)
+        idx = (1:window) + i*window;
+        
+        % SMA
+        SMA(i+1) = mean(abs(aV_filt(idx)) + abs(aML_filt(idx)) + abs(aAP_filt(idx)));
+        
+        % Energy: Sum of squared signal (Time domain energy)
+        % Dividing by window length gives power, keeping sum gives energy/magnitude relation
+        % Adjust based on your specific threshold definition
+        energy(i+1) = sum(aAP_bandpower(idx).^2); 
+    end
+end
