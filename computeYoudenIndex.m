@@ -20,3 +20,6 @@ for i=1:size(X,1)
         
     end
 end
+
+
+    
