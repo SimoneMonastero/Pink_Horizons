@@ -93,5 +93,6 @@ for k = 1:length(nomiFile)
 end
 
 output_func(walking_percentage_CO, walking_percentage_FL, total_steps_CO, total_steps_FL, stride_time_CO, stride_time_FL)
-
+m_valid_bouts_CO=mean(valid_bouts_CO)
+m_valid_bouts_FL=mean(valid_bouts_FL)
 save('Final results')
