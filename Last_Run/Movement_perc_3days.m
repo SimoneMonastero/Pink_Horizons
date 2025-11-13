@@ -73,6 +73,7 @@ for k = 1:length(nomiFile)
     
     [p_walking, bout_starts, bout_ends, bout_durations, valid_bouts]=percentage_walking_func(walking,min_bout_duration_sec, limit);
     % [total_steps, stride_duration]=number_steps_func_wavelet(B_lp,A_lp,Fs,window,min_bout_duration_sec,bout_starts,bout_ends,bout_durations,aV,aV_filt);
+    % [total_steps, wavelet_stride_duration]=number_steps_func_wavelet(B_lp,A_lp,Fs,window,min_bout_duration_sec,bout_starts,bout_ends,bout_durations,aV,aV_filt);
     [total_steps, wavelet_stride_duration]=number_steps_func_wavelet(B_lp,A_lp,Fs,window,min_bout_duration_sec,bout_starts,bout_ends,bout_durations,aV,aV_filt);
     [stride_duration]=stride_duration_func(aAP,Fs);
    
