@@ -21,7 +21,8 @@ function [p_walking, bout_starts, bout_ends, bout_durations, valid_bouts, avg_ra
             idx_start = (bout_starts(j) - 1) * Fs + 1; % Convert start window (sec) to sample index
             idx_end = bout_ends(j) * Fs;               % Convert end window (sec) to sample index
 
-            idx_end = min(idx_end, length(aAP));        % Prevent out-of-bounds indexing
+            % Prevent out-of-bounds indexing
+            idx_end = min(idx_end, length(aAP));
 
             segment = aAP(idx_start:idx_end);           % Extract AP acceleration data for this bout 
             r = max(segment) - min(segment);            % Compute Peak-to-Peak Range (Max - Min)
@@ -38,4 +39,6 @@ function [p_walking, bout_starts, bout_ends, bout_durations, valid_bouts, avg_ra
     % Display results
     fprintf('Found %d walking bouts longer than %d seconds.\n', valid_bouts, min_bout_duration_sec);
     fprintf('Final walking percentage (bouts > %ds): %.2f %%\n', min_bout_duration_sec, p_walking);
+    fprintf('Final total activity: %.2f minutes\n', total_minutes);
+    fprintf('Final average range: %.2f\n', avg_range);
 end
