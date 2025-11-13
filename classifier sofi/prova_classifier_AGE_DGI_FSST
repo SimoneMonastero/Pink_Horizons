@@ -1,7 +1,7 @@
 clear all
 clc
 close all
-data_table = readtable('dati_combinati_per_modello.csv');
+data_table = readtable('AGE_DGI_FSST.csv');
 model = fitglm(data_table, 'label ~ Age + DGI + FSST','Distribution', 'binomial'); % logistic regression model
 % fitglm: Fits a Generalized Linear Model (GLM)
 % Used with 'Distribution','binomial', it performs logistic regression to predict the probability of 'label'
@@ -43,3 +43,4 @@ if global_p_value < 0.05
 else
     disp('Il modello non è globalmente significativo.');
 end
+
