@@ -1,6 +1,6 @@
 function [p_walking, bout_starts, bout_ends, bout_durations, valid_bouts, avg_range, total_minutes] = percentage_walking_func(walking, min_bout_duration_sec, limit, aAP, Fs)
     % Function to compute walking percentage and valid walking bouts
-    
+    list_ranges = [];
    % Identify transitions: 0 -> 1 (start) and 1 -> 0 (end)
     d = diff([0; walking; 0]);
     d = diff([0; walking; 0]);
