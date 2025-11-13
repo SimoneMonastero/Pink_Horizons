@@ -67,7 +67,7 @@ for k = 1:length(nomiFile)
     limit = floor(length(aV_filt) / window);
    
    % [SMA, energy] = SMA_energy_func(window,aV_filt, aML_filt, aAP_filt, Fs, limit);
-   [SMA, energy] = SMA_energy_func2(window, aV_filt, aML_filt, aAP_filt, Fs, limit)
+   [SMA, energy] = SMA_energy_func2(window, aV_filt, aML_filt, aAP_filt, Fs, limit);
 
     % Walking detection (OR logic)
     walking = ((SMA > threshold_SMA_min) & (SMA < threshold_SMA_max)) | (energy > threshold_en);
