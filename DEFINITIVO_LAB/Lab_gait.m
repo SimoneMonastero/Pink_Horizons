@@ -102,7 +102,7 @@ for i=1:lengthF
     l_fall = hsens * height_fall; % sensor elevation fallers
     
     step_length=2*sqrt(2*l_fall*h - h^2); % meters/step
-    gait_speed_fl(i)=step_length * passi_sec; % meter/seconds
+    gait_speed_fl(i)=step_length * passi_sec; % meters/seconds
 end
 % plot(position)
 gait_speed_fl=gait_speed_fl';
