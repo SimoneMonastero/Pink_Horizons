@@ -2,10 +2,7 @@ function  [SMA, energy]=SMA_energy_func(window,aV_filt, aML_filt, aAP_filt, Fs, 
     
     SMA = zeros(limit, 1);
     energy = zeros(limit, 1);
-    
-    % fprintf('Analisi di %d finestre da %d secondo...\n', limit, window_sec);
-    
-    % % print_every = 5000; % Stampa un aggiornamento ogni 5000 finestre (circa 1.4 ore di dati)
+       
     
     for i = 0:(limit-1)
         start_idx = window*i + 1;
@@ -29,4 +26,5 @@ function  [SMA, energy]=SMA_energy_func(window,aV_filt, aML_filt, aAP_filt, Fs, 
         energy(i+1) = trapz(f_band, paAPw_band);
     end
 end
+
 
