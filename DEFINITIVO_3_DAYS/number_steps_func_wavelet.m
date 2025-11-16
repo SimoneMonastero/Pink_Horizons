@@ -12,7 +12,7 @@ function [total_steps] = number_steps_func_wavelet(B_lp, A_lp, Fs, window, min_b
     bout_starts = bout_starts(valid_indices);
     bout_ends = bout_ends(valid_indices);
     
-    scale = 10; % Scale 10 at Fs=100Hz target approx 2Hz (Correct)
+    scale = 10; % Scale 10 at Fs=100Hz target approx 2Hz
     
     for k = 1:length(bout_starts)
         % Extract the bout
@@ -71,4 +71,5 @@ function [total_steps] = number_steps_func_wavelet(B_lp, A_lp, Fs, window, min_b
         total_steps = total_steps + length(IC);
     end
     fprintf('Total number of steps: %f steps \n', total_steps)
+
 end
