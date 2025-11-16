@@ -60,7 +60,7 @@ for i=1:lengthC
     l_con = hsens* height_con; % sensor elevation nonfallers
     
     step_length=2*sqrt(2*l_con*h - h^2); % meters/step
-    gait_speed_co(i)=step_length * passi_sec;
+    gait_speed_co(i)=step_length * passi_sec; % meters/seconds
 end
 %plot(position)
 gait_speed_co=gait_speed_co';
