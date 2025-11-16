@@ -40,8 +40,8 @@ for i=1:lengthC
     aV = aV*g;
     
     [paAP,f]=pwelch(aAP, [], [], [], Fs);
-    paAP=paAP(f>0.5 & f<3);
-    f=f(f>0.5 & f<3);
+    paAP=paAP(f>1 & f<3);
+    f=f(f>1 & f<3);
     [ampl, ind]=max(paAP); % psd amplitude 
     passi_sec=f(ind); % Steps/second
     
@@ -81,8 +81,8 @@ for i=1:lengthF
     aAP = aAP*g;    aML = aML*g;    aV = aV*g;
     
     [paAP,f]=pwelch(aAP, [], [], [], Fs); 
-    paAP=paAP(f>0.5 & f<3);
-    f=f(f>0.5 & f<3);
+    paAP=paAP(f>1 & f<3);
+    f=f(f>1 & f<3);
     [ampl, ind]=max(paAP); % psd amplitude 
     passi_sec=f(ind); % Steps/second
     % bandpass filter already created
