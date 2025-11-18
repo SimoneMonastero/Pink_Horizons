@@ -1,0 +1,46 @@
+function [p_walking, bout_starts, bout_ends, bout_durations, valid_bouts, avg_range, total_minutes] = percentage_walking_func(walking, min_bout_duration_sec, limit, aAP, Fs)
+% Function to compute walking percentage and valid walking bouts
+
+    % Initialize variables
+    list_ranges = [];
+    walking_final = zeros(limit, 1);
+    valid_bouts = 0;
+    
+    % Identify transitions from 0 (inactivity) to 1 (activity) and
+    % viceversa: 0->1 d=1, 1-->0 d=(0-1)=-1
+    d = diff([0; walking; 0]);
+    bout_starts = find(d == 1); % we find the indices of the starting of the activity
+    bout_ends = find(d == -1) - 1; % we find the indices of the last activity sample
+    bout_durations = bout_ends - bout_starts + 1; % Duration in seconds (1-second windows) (+1 to count the initial bout)
+
+    % Keep only bouts longer than the minimum duration (60sec but also samples for the 1sec windowing)
+    for j = 1:length(bout_durations)
+        if bout_durations(j) > min_bout_duration_sec
+            walking_final(bout_starts(j):bout_ends(j)) = 1; % walking final =1 only for bouts>min duration
+            valid_bouts = valid_bouts + 1;
+
+            idx_start = (bout_starts(j) - 1) * Fs + 1; % Convert start window (sec) to sample index
+            idx_end = bout_ends(j) * Fs;               % Convert end window (sec) to sample index
+
+            % Prevent out-of-bounds indexing
+            idx_end = min(idx_end, length(aAP));
+
+            segment = aAP(idx_start:idx_end);           % Extract AP acceleration data for this bout 
+            r = max(segment) - min(segment);            % Compute Peak-to-Peak Range (Max - Min)
+            list_ranges = [list_ranges, r];             % Append current range to the list
+        end
+    end
+
+    % Compute final measures
+    total_seconds = sum(walking_final);
+    total_minutes = total_seconds / 60;
+    p_walking = total_seconds / length(walking_final) * 100;
+
+
+    avg_range = median(list_ranges, 'omitnan');
+    % Display results
+    fprintf('Found %d walking bouts longer than %d seconds.\n', valid_bouts, min_bout_duration_sec);
+    fprintf('Final walking percentage (bouts > %ds): %.2f %%\n', min_bout_duration_sec, p_walking);
+    fprintf('Final total activity: %.2f minutes\n', total_minutes);
+    fprintf('Final average range: %.2f\n', avg_range);
+end
