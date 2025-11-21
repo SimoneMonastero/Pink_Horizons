@@ -1,27 +1,28 @@
 clear, clc, close all
 
-folderPath = 'long-term-movement-monitoring-database-1.0.0\LabWalks'; % Percorso della cartella
-filePattern = 'co*_base.hea'; % Pattern per trovare i file header (assumiamo uno per soggetto/registrazione)
+folderPath = 'long-term-movement-monitoring-database-1.0.0\LabWalks'; % Path to the folder
+filePattern = 'co*_base.hea'; % Pattern to find header files (assuming one per subject/recording)
 
-% Trova tutti i file .hea nella cartella
+% Find all .hea files in the folder
 heaFiles = dir(fullfile(folderPath, filePattern)); 
-% inizializza struct
+% Initialize struct
 allSubjectData = struct();
 
-%  Ciclo su ogni file .hea trovato 
+% Loop over each .hea file found
 for i = 1:length(heaFiles)
     heaFileName = heaFiles(i).name;
-    % Estrai il nome base del record (senza estensione .hea)
+    % Extract the base record name (without .hea extension)
     [~, baseRecordName, ~] = fileparts(heaFileName);
-    % Costruisci il percorso completo per rdsamp (senza estensione)
+    % Build full path for rdsamp (without extension)
     recordPath = fullfile(folderPath, baseRecordName);
-        % Leggi i dati per il record corrente
+        % Read data for the current record
         [signalData, Fs, tm] = rdsamp(recordPath);
         
-        % Salva i dati nella struttura principale
+        % Save data in the main structure
         allSubjectData.(baseRecordName).data = signalData;
         allSubjectData.(baseRecordName).fs = Fs;
         allSubjectData.(baseRecordName).time = tm;
 end
+
 
 save('LabCOData',"allSubjectData")
